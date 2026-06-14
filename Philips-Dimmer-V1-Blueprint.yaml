@@ -17,7 +17,6 @@ blueprint:
           entity:
             domain: 
               - light
-              - switch
     
     brightness_step:
       name: Brightness Step
