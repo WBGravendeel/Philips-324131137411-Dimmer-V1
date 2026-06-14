@@ -12,7 +12,7 @@ blueprint:
   
     target_lights:
       name: Lights and Areas
-      default: []
+      default: {}
       selector:
         target:
           entity:
@@ -21,7 +21,7 @@ blueprint:
 
     target_power:
       name: Outlets and power
-      default: []
+      default: {}
       selector:
         target:
           entity:
