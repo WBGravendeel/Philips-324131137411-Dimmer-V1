@@ -30,28 +30,28 @@ variables:
   brightness_step: !input brightness_step
   
 trigger:
-  - trigger: device
+  - platform: device
     domain: hue
     device_id: !input remote
     type: initial_press
     subtype: 1
     id: on
   
-  - trigger: device
+  - platform: device
     domain: hue
     device_id: !input remote
     type: initial_press
     subtype: 4
     id: off
   
-  - trigger: device
+  - platform: device
     domain: hue
     device_id: !input remote
     type: initial_press
     subtype: 2
     id: brighten
   
-  - trigger: device
+  - platform: device
     domain: hue
     device_id: !input remote
     type: initial_press
