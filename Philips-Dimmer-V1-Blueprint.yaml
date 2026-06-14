@@ -13,6 +13,7 @@ blueprint:
     target_lights:
       name: Lights and Areas
       default: {}
+      optional: true
       selector:
         target:
           entity:
@@ -22,6 +23,7 @@ blueprint:
     target_power:
       name: Outlets and power
       default: {}
+      optional: true
       selector:
         target:
           entity:
@@ -76,12 +78,12 @@ action:
             id: "on"
         sequence:
           - condition: template
-            value_template: "{{ !input target_lights | default([]) | length > 0 }}"
+            value_template: "{{ target_lights.entity_id | default([]) | length > 0 }}"
           - service: homeassistant.turn_on
             target: !input target_lights
 
           - condition: template
-            value_template: "{{ !input target_power | default([]) | length > 0 }}"
+            value_template: "{{ target_lights.entity_id | default([]) | length > 0 }}"
           - service: homeassistant.turn_on
             target: !input target_power
       
@@ -90,12 +92,12 @@ action:
             id: "off"
         sequence:
           - condition: template
-            value_template: "{{ !input target_lights | default([]) | length > 0 }}"
+            value_template: "{{ target_power.entity_id | default([]) | length > 0 }}"
           - service: homeassistant.turn_off
             target: !input target_lights
 
           - condition: template
-            value_template: "{{ !input target_power | default([]) | length > 0 }}"
+            value_template: "{{ target_power.entity_id | default([]) | length > 0 }}"
           - service: homeassistant.turn_off
             target: !input target_power
       
@@ -103,6 +105,8 @@ action:
           - condition: trigger
             id: "brighten"
         sequence:
+          - condition: template
+            value_template: "{{ target_lights.entity_id | default([]) | length > 0 }}"
           - service: light.turn_on
             target: !input target_lights
             data:
@@ -111,6 +115,8 @@ action:
           - condition: trigger
             id: "dim"
         sequence:
+          - condition: template
+            value_template: "{{ target_lights.entity_id | default([]) | length > 0 }}"
           - service: light.turn_on
             target: !input target_lights
             data:
