@@ -17,6 +17,14 @@ blueprint:
           entity:
             domain: 
               - light
+
+    target_power:
+      name: Outlets and power
+      selector:
+        target:
+          entity:
+            domain: 
+              - light
     
     brightness_step:
       name: Brightness Step
@@ -67,6 +75,8 @@ action:
         sequence:
           - service: homeassistant.turn_on
             target: !input target_lights
+          - service: homeassistant.turn_on
+            target: !input target_power
       
       - conditions:
           - condition: trigger
@@ -74,6 +84,8 @@ action:
         sequence:
           - service: homeassistant.turn_off
             target: !input target_lights
+          - service: homeassistant.turn_off
+            target: !input target_power
       - conditions:
           - condition: trigger
             id: "brighten"
