@@ -114,7 +114,7 @@ action:
             id: "brighten"
         sequence:
           - condition: template
-            value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
+            value_template: "{{ target_lights != {} }}"
           - service: light.turn_on
             target: !input target_lights
             data:
@@ -124,7 +124,7 @@ action:
             id: "dim"
         sequence:
           - condition: template
-            value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
+            value_template: "{{ target_lights != {} }}"
           - service: light.turn_on
             target: !input target_lights
             data:
