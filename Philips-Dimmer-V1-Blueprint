@@ -60,32 +60,32 @@ trigger:
  
 action:
   - choose:
-    - conditions:
-        - condition: trigger
-          id: on
-      sequence:
-        - service: light.turn_on
-          target: !input target_lights
-    
-    - conditions:
-        - condition: trigger
-          id: off
-      sequence:
-        - service: light.turn_off
-          target: !input target_lights
-    - conditions:
-        - condition: trigger
-          id: brighten
-      sequence:
-        - service: light.turn_on
-          target: !input target_lights
-          data:
-            brightness_step_pct: "{{ brightness_step }}"
-    - conditions:
-        - condition: trigger
-          id: dim
-      sequence:
-        - service: light.turn_on
-          target: !input target_lights
-          data:
+      - conditions:
+          - condition: trigger
+            id: on
+        sequence:
+          - service: light.turn_on
+            target: !input target_lights
+      
+      - conditions:
+          - condition: trigger
+            id: off
+        sequence:
+          - service: light.turn_off
+            target: !input target_lights
+      - conditions:
+          - condition: trigger
+            id: brighten
+        sequence:
+          - service: light.turn_on
+            target: !input target_lights
+            data:
+              brightness_step_pct: "{{ brightness_step }}"
+      - conditions:
+          - condition: trigger
+            id: dim
+        sequence:
+          - service: light.turn_on
+            target: !input target_lights
+            data:
               brightness_step_pct: "{{ -brightness_step }}"
