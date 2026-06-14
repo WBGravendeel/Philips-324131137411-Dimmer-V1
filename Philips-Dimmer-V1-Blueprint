@@ -35,28 +35,28 @@ trigger:
     device_id: !input remote
     type: initial_press
     subtype: 1
-    id: on
+    id: "on"
   
   - platform: device
     domain: hue
     device_id: !input remote
     type: initial_press
     subtype: 4
-    id: off
+    id: "off"
   
   - platform: device
     domain: hue
     device_id: !input remote
     type: initial_press
     subtype: 2
-    id: brighten
+    id: "brighten"
   
   - platform: device
     domain: hue
     device_id: !input remote
     type: initial_press
     subtype: 3
-    id: dim
+    id: "dim"
  
 action:
   - choose:
