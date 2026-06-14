@@ -41,6 +41,8 @@ blueprint:
   
 variables:
   brightness_step: !input brightness_step
+  target_lights: !input target_lights
+  target_power: !input target_power
   
 trigger:
   - platform: device
