@@ -77,29 +77,39 @@ action:
           - condition: trigger
             id: "on"
         sequence:
-          - condition: template
-            value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
-          - service: homeassistant.turn_on
-            target: !input target_lights
+          - conditions:
+                  - condition: template
+                    value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
+                sequence:
+                  - service: homeassistant.turn_on
+                    target: !input target_lights
 
-          - condition: template
-            value_template: "{{ target_power.get('entity_id', []) | length > 0 }}"
-          - service: homeassistant.turn_on
-            target: !input target_power
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ target_power.get('entity_id', []) | length > 0 }}"
+                sequence:
+                  - service: homeassistant.turn_on
+                    target: !input target_power
       
       - conditions:
           - condition: trigger
             id: "off"
         sequence:
-          - condition: template
-            value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
-          - service: homeassistant.turn_off
-            target: !input target_lights
+          - conditions:
+                  - condition: template
+                    value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
+                sequence:
+                  - service: homeassistant.turn_off
+                    target: !input target_lights
 
-          - condition: template
-            value_template: "{{ target_power.get('entity_id', []) | length > 0 }}"
-          - service: homeassistant.turn_off
-            target: !input target_power
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ target_power.get('entity_id', []) | length > 0 }}"
+                sequence:
+                  - service: homeassistant.turn_off
+                    target: !input target_power
       
       - conditions:
           - condition: trigger
