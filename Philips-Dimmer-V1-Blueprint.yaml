@@ -73,37 +73,29 @@ action:
           - condition: trigger
             id: "on"
         sequence:
-          - if:
-              - condition: template
-                value_template: "{{ lights | length > 0 }}"
-          then:
-              - service: homeassistant.turn_on
-                target: !input target_lights
+          - condition: template
+            value_template: "{{ !input target_lights | default([]) | length > 0 }}"
+          - service: homeassistant.turn_on
+            target: !input target_lights
 
-          - if:
-              - condition: template
-                value_template: "{{ power | length > 0 }}"
-          then:
-              - service: homeassistant.turn_on
-                target: !input target_power
+          - condition: template
+            value_template: "{{ !input target_power | default([]) | length > 0 }}"
+          - service: homeassistant.turn_on
+            target: !input target_power
       
       - conditions:
           - condition: trigger
             id: "off"
         sequence:
-          - if:
-            - condition: template
-              value_template: "{{ lights | length > 0 }}"
-          then:
-            - service: homeassistant.turn_off
-              target: !input target_lights
+          - condition: template
+            value_template: "{{ !input target_lights | default([]) | length > 0 }}"
+          - service: homeassistant.turn_off
+            target: !input target_lights
 
-          - if:
-            - condition: template
-              value_template: "{{ power | length > 0 }}"
-          then:
-            - service: homeassistant.turn_off
-              target: !input target_power
+          - condition: template
+            value_template: "{{ !input target_power | default([]) | length > 0 }}"
+          - service: homeassistant.turn_off
+            target: !input target_power
       
       - conditions:
           - condition: trigger
