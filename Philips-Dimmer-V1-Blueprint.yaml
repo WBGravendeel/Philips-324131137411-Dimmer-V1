@@ -35,14 +35,14 @@ trigger:
     device_id: !input remote
     type: initial_press
     subtype: 1
-    id: "on"
+    id: on
   
   - platform: device
     domain: hue
     device_id: !input remote
     type: initial_press
     subtype: 4
-    id: "off"
+    id: off
   
   - platform: device
     domain: hue
@@ -62,14 +62,14 @@ action:
   - choose:
       - conditions:
           - condition: trigger
-            id: "on"
+            id: on
         sequence:
           - service: light.turn_on
             target: !input target_lights
       
       - conditions:
           - condition: trigger
-            id: "off"
+            id: off
         sequence:
           - service: light.turn_off
             target: !input target_lights
