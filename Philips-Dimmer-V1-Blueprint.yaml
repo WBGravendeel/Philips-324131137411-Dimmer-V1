@@ -74,18 +74,18 @@ action:
             id: "on"
         sequence:
           - if:
-            - condition: template
-              value_template: "{{ lights | length > 0 }}"
+              - condition: template
+                value_template: "{{ lights | length > 0 }}"
           then:
-            - service: homeassistant.turn_on
-              target: !input target_lights
+              - service: homeassistant.turn_on
+                target: !input target_lights
 
           - if:
-            - condition: template
-              value_template: "{{ power | length > 0 }}"
+              - condition: template
+                value_template: "{{ power | length > 0 }}"
           then:
-            - service: homeassistant.turn_on
-              target: !input target_power
+              - service: homeassistant.turn_on
+                target: !input target_power
       
       - conditions:
           - condition: trigger
