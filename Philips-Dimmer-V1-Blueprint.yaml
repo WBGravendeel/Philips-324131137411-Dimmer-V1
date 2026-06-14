@@ -62,20 +62,20 @@ action:
   - choose:
       - conditions:
           - condition: trigger
-            id: on
+            id: "on"
         sequence:
           - service: light.turn_on
             target: !input target_lights
       
       - conditions:
           - condition: trigger
-            id: off
+            id: "off"
         sequence:
           - service: light.turn_off
             target: !input target_lights
       - conditions:
           - condition: trigger
-            id: brighten
+            id: "brighten"
         sequence:
           - service: light.turn_on
             target: !input target_lights
@@ -83,7 +83,7 @@ action:
               brightness_step_pct: "{{ brightness_step }}"
       - conditions:
           - condition: trigger
-            id: dim
+            id: "dim"
         sequence:
           - service: light.turn_on
             target: !input target_lights
