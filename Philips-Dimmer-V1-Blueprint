@@ -1,0 +1,91 @@
+blueprint:
+  name: Hue Dimmer V1 Light Control
+  description: Control lights and areas with a Hue Dimmer V1
+  domain: automation
+
+input:
+  remote:
+    name: Hue Dimmer
+    selector:
+      device:
+        integration: hue
+
+  target_lights:
+    name: Lights and Areas
+    selector:
+      target:
+        entity:
+          domain: light
+  
+  brightness_step:
+    name: Brightness Step
+    default: 10
+    selector:
+      number:
+        min: 1
+        max: 50
+        step: 1
+
+variables:
+  brightness_step: !input brightness_step
+
+trigger:
+  - trigger: device
+    domain: hue
+    device_id: !input remote
+    type: initial_press
+    subtype: 1
+    id: on
+
+  - trigger: device
+    domain: hue
+    device_id: !input remote
+    type: initial_press
+    subtype: 4
+    id: off
+
+  - trigger: device
+    domain: hue
+    device_id: !input remote
+    type: initial_press
+    subtype: 2
+    id: brighten
+
+  - trigger: device
+    domain: hue
+    device_id: !input remote
+    type: initial_press
+    subtype: 3
+    id: dim
+
+action:
+  - choose:
+    - conditions:
+        - condition: trigger
+          id: on
+      sequence:
+        - service: light.turn_on
+          target: !input target_lights
+    
+    - conditions:
+        - condition: trigger
+          id: off
+      sequence:
+        - service: light.turn_off
+          target: !input target_lights
+    - conditions:
+        - condition: trigger
+          id: brighten
+      sequence:
+        - service: light.turn_on
+          target: !input target_lights
+          data:
+            brightness_step_pct: "{{ brightness_step }}"
+    - conditions:
+        - condition: trigger
+          id: dim
+      sequence:
+        - service: light.turn_on
+          target: !input target_lights
+          data:
+            brightness_step_pct: "{{ -brightness_step }}"
