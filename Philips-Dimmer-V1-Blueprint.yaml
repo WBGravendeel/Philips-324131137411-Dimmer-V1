@@ -77,41 +77,37 @@ action:
           - condition: trigger
             id: "on"
         sequence:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
-                sequence:
-                  - service: homeassistant.turn_on
-                    target: !input target_lights
+          - if:
+              - condition: template
+                value_template: "{{ target_lights != {} }}"
+            then:
+              - service: homeassistant.turn_on
+                target: !input target_lights
 
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ target_power.get('entity_id', []) | length > 0 }}"
-                sequence:
-                  - service: homeassistant.turn_on
-                    target: !input target_power
+          - if:
+              - condition: template
+                value_template: "{{ target_power != {} }}"
+            then:
+              - service: homeassistant.turn_on
+                target: !input target_power
       
       - conditions:
           - condition: trigger
             id: "off"
         sequence:
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
-                sequence:
-                  - service: homeassistant.turn_off
-                    target: !input target_lights
+          - if:
+              - condition: template
+                value_template: "{{ target_lights != {} }}"
+            then:
+              - service: homeassistant.turn_off
+                target: !input target_lights
 
-          - choose:
-              - conditions:
-                  - condition: template
-                    value_template: "{{ target_power.get('entity_id', []) | length > 0 }}"
-                sequence:
-                  - service: homeassistant.turn_off
-                    target: !input target_power
+          - if:
+              - condition: template
+                value_template: "{{ target_power != {} }}"
+            then:
+              - service: homeassistant.turn_off
+                target: !input target_power
       
       - conditions:
           - condition: trigger
