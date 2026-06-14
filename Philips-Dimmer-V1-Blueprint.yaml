@@ -64,14 +64,14 @@ action:
           - condition: trigger
             id: "on"
         sequence:
-          - service: light.turn_on
+          - service: homeassistant.turn_on
             target: !input target_lights
       
       - conditions:
           - condition: trigger
             id: "off"
         sequence:
-          - service: light.turn_off
+          - service: homeassistant.turn_off
             target: !input target_lights
       - conditions:
           - condition: trigger
