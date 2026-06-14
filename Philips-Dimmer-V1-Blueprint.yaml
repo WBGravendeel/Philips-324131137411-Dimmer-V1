@@ -80,7 +80,7 @@ action:
             - service: homeassistant.turn_on
               target: !input target_lights
 
-        - if:
+          - if:
             - condition: template
               value_template: "{{ power | length > 0 }}"
           then:
@@ -98,7 +98,7 @@ action:
             - service: homeassistant.turn_off
               target: !input target_lights
 
-        - if:
+          - if:
             - condition: template
               value_template: "{{ power | length > 0 }}"
           then:
