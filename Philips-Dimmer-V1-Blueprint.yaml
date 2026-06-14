@@ -78,7 +78,7 @@ action:
             id: "on"
         sequence:
           - conditions:
-                  - condition: template
+              - condition: template
                     value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
                 sequence:
                   - service: homeassistant.turn_on
@@ -97,7 +97,7 @@ action:
             id: "off"
         sequence:
           - conditions:
-                  - condition: template
+              - condition: template
                     value_template: "{{ target_lights.get('entity_id', []) | length > 0 }}"
                 sequence:
                   - service: homeassistant.turn_off
