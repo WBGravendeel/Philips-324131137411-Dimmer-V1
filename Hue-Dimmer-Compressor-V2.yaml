@@ -1,0 +1,111 @@
+blueprint:
+  name: Hue Dimmer V2 Compressor set-up
+  description: Control Compressor and fan based on a 2 compressor + fans set-up
+  domain: automation
+
+  input:
+    remote:
+      name: Hue Dimmer
+      selector:
+        device:
+          integration: hue
+  
+    target_compressor:
+      name: Compressor to turn on
+      default: {}
+      selector:
+        target:
+          entity:
+            domain: 
+              - light
+
+    conditional_compressor:
+      name: Other compressor (currently only 1 supported)
+      selector:
+        entity:
+          domain:
+            - light
+
+    target_fan:
+      name: Fan for compressors
+      default: {}
+      selector:
+        target:
+          entity:
+            domain: 
+              - light
+
+    temperature_sensor:
+      selector:
+        entity:
+          domain:
+            - sensor
+  
+variables:
+  target_compressor: !input target_compressor
+  conditional_compressor: !input conditional_compressor
+  target_fan: !input target_fan
+  temperature_sensor: !input temperature_sensor
+  
+trigger:
+  - platform: device
+    domain: hue
+    device_id: !input remote
+    type: initial_press
+    subtype: 1
+    id: "on"
+  
+  - platform: device
+    domain: hue
+    device_id: !input remote
+    type: initial_press
+    subtype: 4
+    id: "off"
+
+  - platform: numeric_state
+    entity_id: !input temperature_sensor
+    above: 80
+    id: "high_temp"
+ 
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: "high_temp"
+        sequence:
+          - service: homeassistant.turn_on
+            target: !input target_fan
+          - service: homeassistant.turn_off
+            target: !input target_compressor
+          - service: homeassistant.turn_off
+            entity_id: !input conditional_compressor
+            
+      - conditions:
+          - condition: trigger
+            id: "on"
+          - condition: numeric_state
+            entity_id: !input temperature_sensor
+            below: 80
+        sequence:
+          - service: homeassistant.turn_on
+            target: !input target_compressor
+
+          - service: homeassistant.turn_on
+            target: !input target_fan
+      
+      - conditions:
+          - condition: trigger
+            id: "off"
+        
+        sequence:
+          - service: homeassistant.turn_off
+            target: !input target_compressor
+
+          - if:
+              - condition: state
+                entity_id: !input conditional_compressor
+                state: "off"
+            then:
+              - service: homeassistant.turn_off
+                target: !input target_fan
+mode: restart    
