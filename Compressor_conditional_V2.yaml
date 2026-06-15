@@ -1,6 +1,6 @@
 blueprint:
-  name: Hue Dimmer V1 Light Control
-  description: Control lights and areas with a Hue Dimmer V1
+  name: Hue Dimmer V2 Compressor set-up
+  description: Control Compressor and fan based on a 2 compressor + fans set-up
   domain: automation
 
   input:
