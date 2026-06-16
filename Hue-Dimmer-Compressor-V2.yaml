@@ -36,16 +36,29 @@ blueprint:
               - light
 
     temperature_sensor:
+      name: Temperature Sensor
       selector:
         entity:
-          domain:
-            - sensor
+          filter:
+            - domain: sensor
+              device_class: temperature
+            
+
+    max_temperature:
+      name: Maximum temperature allowed
+      default: 60
+      selector:
+        number:
+          min: 1
+          max: 100
+          step: 1
   
 variables:
   target_compressor: !input target_compressor
   conditional_compressor: !input conditional_compressor
   target_fan: !input target_fan
   temperature_sensor: !input temperature_sensor
+  max_temperature: !input max_temperature
   
 trigger:
   - platform: device
@@ -64,7 +77,7 @@ trigger:
 
   - platform: numeric_state
     entity_id: !input temperature_sensor
-    above: 80
+    above: !input max_temperature
     id: "high_temp"
  
 action:
@@ -85,7 +98,7 @@ action:
             id: "on"
           - condition: numeric_state
             entity_id: !input temperature_sensor
-            below: 80
+            below: !input max_temperature
         sequence:
           - service: homeassistant.turn_on
             target: !input target_compressor
