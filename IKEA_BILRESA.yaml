@@ -1,37 +1,40 @@
 blueprint:
   name: IKEA Bilresa Light Control
-  description: Control lights and areas with a IKEA Bilresa
+  description: Control lights and areas with an IKEA Bilresa
   domain: automation
-
   input:
-    matter_button:
-      name: IKEA Bilresa Button Entity (optional)
-      default: null
+    button_1:
+      name: Bilresa Button 1
       selector:
         entity:
           filter:
             - integration: matter
               domain: event
               device_class: button
-  
+    button_2:
+      name: Bilresa Button 2
+      selector:
+        entity:
+          filter:
+            - integration: matter
+              domain: event
+              device_class: button
     target_lights:
       name: Lights and Areas
       default: {}
       selector:
         target:
           entity:
-            domain: 
+            domain:
               - light
-
     target_power:
       name: Outlets and power
       default: {}
       selector:
         target:
           entity:
-            domain: 
-              - light
-    
+            domain:
+              - switch
     brightness_step:
       name: Brightness Step
       default: 20
@@ -40,41 +43,37 @@ blueprint:
           min: 1
           max: 50
           step: 1
-  
+
 variables:
   brightness_step: !input brightness_step
   target_lights: !input target_lights
   target_power: !input target_power
-  
+
 trigger:
-  - platform: device
-    domain: matter
-    device_id: !input remote
-    type: multi_press_1
-    subtype: 1
+  - platform: state
+    entity_id: !input button_1
+    attribute: event_type
+    to: multi_press_1
     id: "on"
-  
-  - platform: device
-    domain: matter
-    device_id: !input remote
-    type: multi_press_1
-    subtype: 2
+
+  - platform: state
+    entity_id: !input button_1
+    attribute: event_type
+    to: multi_press_2
     id: "off"
-  
-  - platform: device
-    domain: matter
-    device_id: !input remote
-    type: multi_press_2
-    subtype: 1
+
+  - platform: state
+    entity_id: !input button_2
+    attribute: event_type
+    to: multi_press_1
     id: "brighten"
-  
-  - platform: device
-    domain: matter
-    device_id: !input remote
-    type: multi_press_2
-    subtype: 2
+
+  - platform: state
+    entity_id: !input button_2
+    attribute: event_type
+    to: multi_press_2
     id: "dim"
- 
+
 action:
   - choose:
       - conditions:
@@ -85,16 +84,15 @@ action:
               - condition: template
                 value_template: "{{ target_lights != {} }}"
             then:
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 target: !input target_lights
-
           - if:
               - condition: template
                 value_template: "{{ target_power != {} }}"
             then:
-              - service: homeassistant.turn_on
+              - action: homeassistant.turn_on
                 target: !input target_power
-      
+
       - conditions:
           - condition: trigger
             id: "off"
@@ -103,33 +101,37 @@ action:
               - condition: template
                 value_template: "{{ target_lights != {} }}"
             then:
-              - service: homeassistant.turn_off
+              - action: homeassistant.turn_off
                 target: !input target_lights
-
           - if:
               - condition: template
                 value_template: "{{ target_power != {} }}"
             then:
-              - service: homeassistant.turn_off
+              - action: homeassistant.turn_off
                 target: !input target_power
-      
+
       - conditions:
           - condition: trigger
             id: "brighten"
         sequence:
-          - condition: template
-            value_template: "{{ target_lights != {} }}"
-          - service: light.turn_on
-            target: !input target_lights
-            data:
-              brightness_step_pct: "{{ brightness_step }}"
+          - if:
+              - condition: template
+                value_template: "{{ target_lights != {} }}"
+            then:
+              - action: light.turn_on
+                target: !input target_lights
+                data:
+                  brightness_step_pct: "{{ brightness_step }}"
+
       - conditions:
           - condition: trigger
             id: "dim"
         sequence:
-          - condition: template
-            value_template: "{{ target_lights != {} }}"
-          - service: light.turn_on
-            target: !input target_lights
-            data:
-              brightness_step_pct: "{{ -brightness_step }}"
+          - if:
+              - condition: template
+                value_template: "{{ target_lights != {} }}"
+            then:
+              - action: light.turn_on
+                target: !input target_lights
+                data:
+                  brightness_step_pct: "{{ -brightness_step }}"
