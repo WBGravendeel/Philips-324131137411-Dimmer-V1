@@ -4,12 +4,15 @@ blueprint:
   domain: automation
 
   input:
-    remote:
-      name: Remote
+    matter_button:
+      name: IKEA Bilresa Button Entity (optional)
+      default: null
       selector:
-        device:
+        entity:
           filter:
             - integration: matter
+              domain: event
+              device_class: button
   
     target_lights:
       name: Lights and Areas
