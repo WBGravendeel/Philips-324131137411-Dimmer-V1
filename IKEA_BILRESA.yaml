@@ -3,12 +3,14 @@ blueprint:
   description: Control lights and areas with a IKEA Bilresa
   domain: automation
 
-  input:
-    remote:
-      name: Hue Dimmer
-      selector:
-        device:
-          integration: matter
+input:
+  remote:
+    name: Remote
+    selector:
+      device:
+        filter:
+          - integration: hue
+          - integration: matter
   
     target_lights:
       name: Lights and Areas
