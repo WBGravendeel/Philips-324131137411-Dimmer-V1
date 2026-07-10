@@ -9,7 +9,6 @@ blueprint:
       selector:
         device:
           filter:
-            - integration: hue
             - integration: matter
   
     target_lights:
@@ -46,28 +45,28 @@ variables:
   
 trigger:
   - platform: device
-    domain: hue
+    domain: matter
     device_id: !input remote
     type: multi_press_1
     subtype: 1
     id: "on"
   
   - platform: device
-    domain: hue
+    domain: matter
     device_id: !input remote
     type: multi_press_1
     subtype: 2
     id: "off"
   
   - platform: device
-    domain: hue
+    domain: matter
     device_id: !input remote
     type: multi_press_2
     subtype: 1
     id: "brighten"
   
   - platform: device
-    domain: hue
+    domain: matter
     device_id: !input remote
     type: multi_press_2
     subtype: 2
