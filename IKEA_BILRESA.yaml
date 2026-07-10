@@ -57,12 +57,6 @@ trigger:
     id: "on"
 
   - platform: state
-    entity_id: !input button_2
-    attribute: event_type
-    to: multi_press_1
-    id: "off"
-
-  - platform: state
     entity_id: !input button_1
     attribute: event_type
     to: multi_press_2
@@ -71,9 +65,15 @@ trigger:
   - platform: state
     entity_id: !input button_2
     attribute: event_type
+    to: multi_press_1
+    id: "off"
+
+  - platform: state
+    entity_id: !input button_2
+    attribute: event_type
     to: multi_press_2
     id: "dim"
-
+    
 action:
   - choose:
       - conditions:
