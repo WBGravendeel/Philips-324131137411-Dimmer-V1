@@ -1,0 +1,131 @@
+blueprint:
+  name: IKEA Bilresa Light Control
+  description: Control lights and areas with a IKEA Bilresa
+  domain: automation
+
+  input:
+    remote:
+      name: Hue Dimmer
+      selector:
+        device:
+          integration: hue
+  
+    target_lights:
+      name: Lights and Areas
+      default: {}
+      selector:
+        target:
+          entity:
+            domain: 
+              - light
+
+    target_power:
+      name: Outlets and power
+      default: {}
+      selector:
+        target:
+          entity:
+            domain: 
+              - light
+    
+    brightness_step:
+      name: Brightness Step
+      default: 20
+      selector:
+        number:
+          min: 1
+          max: 50
+          step: 1
+  
+variables:
+  brightness_step: !input brightness_step
+  target_lights: !input target_lights
+  target_power: !input target_power
+  
+trigger:
+  - platform: device
+    domain: hue
+    device_id: !input remote
+    type: multi_press_1
+    subtype: 1
+    id: "on"
+  
+  - platform: device
+    domain: hue
+    device_id: !input remote
+    type: multi_press_1
+    subtype: 2
+    id: "off"
+  
+  - platform: device
+    domain: hue
+    device_id: !input remote
+    type: multi_press_2
+    subtype: 1
+    id: "brighten"
+  
+  - platform: device
+    domain: hue
+    device_id: !input remote
+    type: multi_press_2
+    subtype: 2
+    id: "dim"
+ 
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: "on"
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ target_lights != {} }}"
+            then:
+              - service: homeassistant.turn_on
+                target: !input target_lights
+
+          - if:
+              - condition: template
+                value_template: "{{ target_power != {} }}"
+            then:
+              - service: homeassistant.turn_on
+                target: !input target_power
+      
+      - conditions:
+          - condition: trigger
+            id: "off"
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ target_lights != {} }}"
+            then:
+              - service: homeassistant.turn_off
+                target: !input target_lights
+
+          - if:
+              - condition: template
+                value_template: "{{ target_power != {} }}"
+            then:
+              - service: homeassistant.turn_off
+                target: !input target_power
+      
+      - conditions:
+          - condition: trigger
+            id: "brighten"
+        sequence:
+          - condition: template
+            value_template: "{{ target_lights != {} }}"
+          - service: light.turn_on
+            target: !input target_lights
+            data:
+              brightness_step_pct: "{{ brightness_step }}"
+      - conditions:
+          - condition: trigger
+            id: "dim"
+        sequence:
+          - condition: template
+            value_template: "{{ target_lights != {} }}"
+          - service: light.turn_on
+            target: !input target_lights
+            data:
+              brightness_step_pct: "{{ -brightness_step }}"
