@@ -8,7 +8,7 @@ blueprint:
       name: Hue Dimmer
       selector:
         device:
-          integration: hue
+          integration: matter
   
     target_lights:
       name: Lights and Areas
