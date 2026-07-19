@@ -1,0 +1,138 @@
+blueprint:
+  name: Hue Dimmer V2 Compressor set-up
+  description: Control Compressor and fan based on a 2 compressor + fans set-up
+  domain: automation
+  input:
+    remote:
+      name: Hue Dimmer
+      selector:
+        device:
+          integration: hue
+
+    target_compressor:
+      name: Compressor to turn on
+      default: {}
+      selector:
+        target:
+          entity:
+            domain:
+              - light
+    conditional_compressor:
+      name: Other compressor (currently only 1 supported)
+      selector:
+        entity:
+          domain:
+            - light
+    target_fan:
+      name: Fan for compressors
+      default: {}
+      selector:
+        target:
+          entity:
+            domain:
+              - light
+    temperature_sensor:
+      name: Temperature Sensor
+      selector:
+        entity:
+          filter:
+            - domain: sensor
+              device_class: temperature
+
+    notify_target:
+      name: Notify Target
+      selector:
+        entity:
+          filter:
+            domain: notify
+
+    notify_message:
+      name: Notification Message
+      description: >
+        Message sent when high temperature triggers. You can use templates,
+        e.g. {{ states(temperature_sensor) }} for the current reading, or
+        {{ state_attr(temperature_sensor, 'friendly_name') }} for the sensor name.
+      default: >-
+        High temperature triggered on {{ state_attr(temperature_sensor, 'friendly_name') }}
+        (currently {{ states(temperature_sensor) }}°).
+      selector:
+        text:
+
+    max_temperature:
+      name: Maximum temperature allowed
+      default: 60
+      selector:
+        number:
+          min: 1
+          max: 100
+          step: 1
+
+variables:
+  temperature_sensor: !input temperature_sensor
+  notify_message: !input notify_message
+
+trigger:
+  - platform: device
+    domain: hue
+    device_id: !input remote
+    type: initial_press
+    subtype: 1
+    id: "on"
+
+  - platform: device
+    domain: hue
+    device_id: !input remote
+    type: initial_press
+    subtype: 4
+    id: "off"
+  - platform: numeric_state
+    entity_id: !input temperature_sensor
+    above: !input max_temperature
+    id: "high_temp"
+
+action:
+  - choose:
+      - conditions:
+          - condition: trigger
+            id: "high_temp"
+        sequence:
+          - service: homeassistant.turn_on
+            target: !input target_fan
+          - service: homeassistant.turn_off
+            target: !input target_compressor
+          - service: homeassistant.turn_off
+            entity_id: !input conditional_compressor
+          - action: notify.send_message
+            target:
+              entity_id: !input notify_target
+            data:
+              title: "⚠️ High Temperature Alert"
+              message: "{{ notify_message }}"
+
+      - conditions:
+          - condition: trigger
+            id: "on"
+          - condition: numeric_state
+            entity_id: !input temperature_sensor
+            below: !input max_temperature
+        sequence:
+          - service: homeassistant.turn_on
+            target: !input target_compressor
+          - service: homeassistant.turn_on
+            target: !input target_fan
+
+      - conditions:
+          - condition: trigger
+            id: "off"
+
+        sequence:
+          - service: homeassistant.turn_off
+            target: !input target_compressor
+          - if:
+              - condition: state
+                entity_id: !input conditional_compressor
+                state: "off"
+            then:
+              - service: homeassistant.turn_off
+                target: !input target_fan
+mode: restart
