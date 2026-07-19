@@ -45,6 +45,7 @@ blueprint:
         entity:
           filter:
             domain: notify
+          multiple: true
 
     notify_message:
       name: Notification Message
